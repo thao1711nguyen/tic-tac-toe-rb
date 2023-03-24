@@ -1,3 +1,4 @@
+#require 'pry-byebug'
 # display the board: a function accept an array
 # return the board
 # function game
@@ -57,6 +58,7 @@ def game
     player_move[name].push(move)
     board = change_board(board, name, move)
     if count >= 5
+      #binding.pry
       result = check_winner(player_move, name)
       if count == 9 && result.empty?
         return 'You tie!'
@@ -82,6 +84,8 @@ def change_board(board, name, move)
 end
 
 def check_winner(player_move, player)
+
+
   winner_move = [
     [1, 2, 3], [4, 5, 6], [7, 8, 9],
     [1, 4, 7], [2, 5, 8], [3, 6, 9],
@@ -93,7 +97,9 @@ def check_winner(player_move, player)
     if result.empty? 
       return "Congratulation, player #{player}! You win!" 
     else 
-      return ''
+      if winner_move.last.eql? item
+        return ''
+      end
     end
   end
 end
