@@ -1,4 +1,3 @@
-#require 'pry-byebug'
 # display the board: a function accept an array
 # return the board
 # function game
@@ -31,77 +30,97 @@
 # after 3 move of the first player, check winner
 # tie: no winner && no move to make
 
-def display_board(board)
-  board.each_with_index do |value, index|
-    if (index + 1) % 3 == 0
-      puts value
-    else
-      print value.to_s + '   '
-    end
+
+class Player
+  attr_accessor :move
+  attr_reader :name
+  def initialize(name)
+    @name = name
+    @move = []
   end
 end
-
-def game
-  count = 0
-  board = (1..9).to_a
-  player_move = { 'X' => [],
-                  'O' => [] }
-  while count <= 9
-    display_board(board)
-    count += 1
-    name = if count.odd?
-             'X'
-           else
-             'O'
-           end
-    move = instruct(name)
-    player_move[name].push(move)
-    board = change_board(board, name, move)
-    if count >= 5
-      #binding.pry
-      result = check_winner(player_move, name)
-      if count == 9 && result.empty?
-        return 'You tie!'
-      elsif !result.empty?
-        display_board(board)
-        return result
+class Board
+  attr_accessor :board
+  def initialize(board=(1..9).to_a)
+    @board = board
+  end
+  def display
+    @board.each_with_index do |value, index|
+      if (index + 1) % 3 == 0
+        puts value
+      else
+        print value.to_s + '   '
       end
     end
   end
+  def change_board(player)
+    board.each_with_index do |item, index|
+      next unless item.between?(1, 9)
+      board[index] = player.name if player.move.include?(item)
+    end
+  end
 end
+class Game 
+  attr_accessor :count
+  attr_reader :player_O, :player_X, :board
+  def initialize
+    @player_X = Player.new('X')
+    @player_O = Player.new('O')
+    @board = Board.new
+    @count = 1
+  end
 
-def instruct(name)
-  puts "player #{name}, please make your move: "
-  move = gets.chomp.to_i
+  def get_move(player)
+    puts "player #{player.name}, please make your move: "
+    move = gets.chomp.to_i 
+    player.move << move
+  end
+  def who_wins?(player)
+    winner_moves = [
+      [1, 2, 3], [4, 5, 6], [7, 8, 9],
+      [1, 4, 7], [2, 5, 8], [3, 6, 9],
+      [1, 5, 9], [3, 5, 7]
+    ]
+    winner_moves.each do |winner_move|
+      result = winner_move - player.move
+      if result.empty?
+        return player.name
+      elsif winner_moves.last.eql? winner_move
+        return nil
+      end
+    end
+  end
   
-end
-
-def change_board(board, name, move)
-  board.each do |item|
-    board[move - 1] = name if item == move
+  def play
+    until !winner.nil? || @count > 9 do 
+      @board.display
+      player = count.odd? @player_X : @player_O
+      get_move(player)
+      winner = who_wins?(player) if count > 4
+      @board.change_board(player)
+      @count += 1
+    end
+    @board.display
+    annouce_result(winner)
   end
-  board # check if board is removed, can this function return board?
-end
-
-def check_winner(player_move, player)
-
-
-  winner_move = [
-    [1, 2, 3], [4, 5, 6], [7, 8, 9],
-    [1, 4, 7], [2, 5, 8], [3, 6, 9],
-    [1, 5, 9], [3, 5, 7]
-  ]
-  move = player_move[player]
-  winner_move.each do |item|
-    result = item - move
-    if result.empty? 
-      return "Congratulation, player #{player}! You win!" 
+  def annouce_result(winner)
+    if winner.nil?
+      puts 'You tied!'
     else 
-      if winner_move.last.eql? item
-        return ''
-      end
+      puts "Congratulation player #{winner.name}! You won!"
     end
   end
 end
+  
 
-puts game
+    
+
+  
+
+  
+
+ 
+
+  
+
+
