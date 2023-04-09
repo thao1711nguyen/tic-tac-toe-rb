@@ -55,7 +55,7 @@ class Board
   end
   def change_board(player)
     board.each_with_index do |item, index|
-      next unless item.between?(1, 9)
+      next unless item.to_i.between?(1, 9)
       board[index] = player.name if player.move.include?(item)
     end
   end
@@ -69,12 +69,41 @@ class Game
     @board = Board.new
     @count = 1
   end
-
-  def get_move(player)
-    puts "player #{player.name}, please make your move: "
-    move = gets.chomp.to_i 
-    player.move << move
+  def game_over?(winner)
+    !winner.nil? || @count == 9
   end
+  def play
+    winner = nil
+    loop do 
+      @board.display
+      if count.odd? 
+        player = @player_X
+      else 
+        player = @player_O
+      end
+      get_move(player)
+      winner = who_wins?(player) if count > 4
+      @board.change_board(player)
+      break if game_over?(winner)
+      @count += 1
+    end
+    @board.display
+    annouce_result(winner)
+  end
+  
+  
+  def get_move(player)
+    loop do 
+      puts "player #{player.name}, please make your move: "
+      move = gets.chomp.to_i 
+      if @board.board.any?(move)
+        player.move << move
+        break 
+      end
+      puts "Error! Please enter a valid move!"
+    end
+  end
+
   def who_wins?(player)
     winner_moves = [
       [1, 2, 3], [4, 5, 6], [7, 8, 9],
@@ -90,19 +119,7 @@ class Game
       end
     end
   end
-  
-  def play
-    until !winner.nil? || @count > 9 do 
-      @board.display
-      player = count.odd? @player_X : @player_O
-      get_move(player)
-      winner = who_wins?(player) if count > 4
-      @board.change_board(player)
-      @count += 1
-    end
-    @board.display
-    annouce_result(winner)
-  end
+  private
   def annouce_result(winner)
     if winner.nil?
       puts 'You tied!'
@@ -111,7 +128,9 @@ class Game
     end
   end
 end
-  
+#new_game = Game.new
+#new_game.play
+
 
     
 
