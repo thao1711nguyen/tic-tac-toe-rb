@@ -1,36 +1,3 @@
-# display the board: a function accept an array
-# return the board
-# function game
-# initialize a count variable that count the move and equal to 0
-# WHILE count is less than or equal to 9
-# increment count by 1
-# IF count is an odd
-# then the player is X
-# replace the number that player X chooses with X
-# display the board
-# ELSE
-# then the player is O
-# same like above
-# IF count is bigger or equal to 5
-# check the winner
-# IF we have the winner
-# break out of loop
-# return the winner
-# function: check winner? that takes PLAYER_MOVE (a hash ) as an argument
-# initialize a winner_move 2D array consisting winning combinations (8)
-# initialize a move array that equals the value (an array) of PLAYER_MOVE
-# FOR EACH array of winner_move
-# subtract it with move
-# IF the resulted array is empty
-# return the winner (the key of PLAYER_MOVE)
-# ELSE
-# return empty string stands for no
-
-# win: 3 on a line
-# after 3 move of the first player, check winner
-# tie: no winner && no move to make
-
-
 class Player
   attr_accessor :move
   attr_reader :name
@@ -113,7 +80,7 @@ class Game
     winner_moves.each do |winner_move|
       result = winner_move - player.move
       if result.empty?
-        return player.name
+        return player
       elsif winner_moves.last.eql? winner_move
         return nil
       end
@@ -128,8 +95,8 @@ class Game
     end
   end
 end
-#new_game = Game.new
-#new_game.play
+new_game = Game.new
+new_game.play
 
 
     

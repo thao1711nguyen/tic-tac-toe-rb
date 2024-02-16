@@ -35,7 +35,7 @@ describe Game do
                 winner = nil
                 expect(game_end.game_over?(winner)).to eq(true)
             end
-        end
+        end 
         context "when there is no winner and count is less than 9" do 
             it "returns false" do 
                 game_end.instance_variable_set(:@count, 3)
